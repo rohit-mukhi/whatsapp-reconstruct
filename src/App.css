@@ -422,6 +422,7 @@ html, body {
 /* ─── Message Bubbles ───────────────────────────────────────────── */
 .bubble-row {
   display: flex;
+  width: 100%;
   margin-bottom: 2px;
 }
 
@@ -652,6 +653,10 @@ html, body {
   }
 
   .bubble {
+    max-width: 100%;
+  }
+
+  .bubble-wrapper {
     max-width: 82%;
   }
 
@@ -671,7 +676,7 @@ html, body {
 
 /* ─── Small phones (≤ 380px) ────────────────────────────────────── */
 @media (max-width: 380px) {
-  .bubble {
+  .bubble-wrapper {
     max-width: 90%;
   }
 
@@ -685,6 +690,7 @@ html, body {
   display: flex;
   flex-direction: column;
   max-width: 65%;
+  min-width: 0;
 }
 
 .bubble-row.sent .bubble-wrapper  { align-items: flex-end; }
