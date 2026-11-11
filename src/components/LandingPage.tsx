@@ -1,3 +1,7 @@
+import { useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
 interface Props {
   onGetStarted: () => void;
 }
@@ -82,30 +86,50 @@ const steps = [
   },
 ];
 
+// AOS animation assigned per feature card index
+const featureAos = ['fade-up', 'fade-up', 'fade-up', 'fade-up', 'fade-up', 'fade-up'];
+const featureDelays = [0, 100, 200, 0, 100, 200];
+
 export default function LandingPage({ onGetStarted }: Props) {
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 60,
+    });
+
+    // AOS listens to window scroll by default, but our scroller is .landing.
+    // Re-trigger AOS checks on every scroll of the landing container.
+    const el = document.querySelector('.landing');
+    const onScroll = () => AOS.refresh();
+    el?.addEventListener('scroll', onScroll, { passive: true });
+    return () => el?.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <div className="landing">
 
       {/* ── Hero ── */}
       <header className="landing-hero">
         <div className="landing-hero-inner">
-          <div className="landing-icon">
+          <div className="landing-icon" data-aos="zoom-in" data-aos-duration="500">
             <svg viewBox="0 0 24 24" fill="currentColor" width="52" height="52">
               <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.38 1.26 4.8L2.05 22l5.43-1.43c1.37.73 2.92 1.15 4.56 1.15 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.52 14.15c-.23.63-1.35 1.21-1.85 1.27-.5.06-1.01.24-3.39-.71-2.84-1.12-4.65-4.01-4.79-4.2-.14-.19-1.13-1.5-1.13-2.86 0-1.36.71-2.03.96-2.3.25-.27.55-.34.73-.34l.53.01c.17 0 .4-.06.63.48l.85 2.04c.07.14.12.3.02.48l-.29.45c-.14.16-.3.36-.43.48-.14.13-.29.27-.12.53.17.26.74 1.22 1.59 1.97 1.09.97 2.01 1.27 2.27 1.41.26.14.41.12.56-.07l.81-1.01c.17-.26.34-.21.57-.13l1.72.82c.25.13.42.19.48.3.06.11.06.63-.17 1.26z"/>
             </svg>
           </div>
-          <h1 className="landing-title">WhatsApp Chat Viewer</h1>
-          <p className="landing-tagline">
+          <h1 className="landing-title" data-aos="fade-up" data-aos-delay="80">WhatsApp Chat Viewer</h1>
+          <p className="landing-tagline" data-aos="fade-up" data-aos-delay="160">
             Reconstruct your exported WhatsApp chats in a pixel-perfect interface —<br className="landing-br" />
             entirely on your device, with zero data ever leaving your browser.
           </p>
-          <div className="landing-privacy-badge">
+          <div className="landing-privacy-badge" data-aos="fade-up" data-aos-delay="240">
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
             </svg>
             No servers &nbsp;·&nbsp; No uploads &nbsp;·&nbsp; No tracking
           </div>
-          <button className="landing-cta" onClick={onGetStarted}>
+          <button className="landing-cta" onClick={onGetStarted} data-aos="fade-up" data-aos-delay="320">
             Get Started
             <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
               <path d="M8 5v14l11-7z"/>
@@ -117,7 +141,7 @@ export default function LandingPage({ onGetStarted }: Props) {
       {/* ── Privacy callout ── */}
       <section className="landing-privacy">
         <div className="landing-section-inner">
-          <div className="privacy-card">
+          <div className="privacy-card" data-aos="fade-up">
             <svg viewBox="0 0 24 24" fill="currentColor" width="36" height="36" className="privacy-icon">
               <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4l5 2.18V11c0 3.5-2.33 6.79-5 7.93-2.67-1.14-5-4.43-5-7.93V7.18L12 5zm-1 4v4h2V9h-2zm0 6v2h2v-2h-2z"/>
             </svg>
@@ -137,10 +161,15 @@ export default function LandingPage({ onGetStarted }: Props) {
       {/* ── Features ── */}
       <section className="landing-features">
         <div className="landing-section-inner">
-          <h2 className="landing-section-title">Everything you'd expect</h2>
+          <h2 className="landing-section-title" data-aos="fade-up">Everything you'd expect</h2>
           <div className="features-grid">
-            {features.map((f) => (
-              <div key={f.title} className="feature-card">
+            {features.map((f, i) => (
+              <div
+                key={f.title}
+                className="feature-card"
+                data-aos={featureAos[i]}
+                data-aos-delay={featureDelays[i]}
+              >
                 <div className="feature-icon">{f.icon}</div>
                 <h3 className="feature-title">{f.title}</h3>
                 <p className="feature-desc">{f.desc}</p>
@@ -153,10 +182,15 @@ export default function LandingPage({ onGetStarted }: Props) {
       {/* ── How it works ── */}
       <section className="landing-steps">
         <div className="landing-section-inner">
-          <h2 className="landing-section-title">How it works</h2>
+          <h2 className="landing-section-title" data-aos="fade-up">How it works</h2>
           <div className="steps-list">
             {steps.map((s, i) => (
-              <div key={s.num} className="step">
+              <div
+                key={s.num}
+                className="step"
+                data-aos="fade-up"
+                data-aos-delay={i * 100}
+              >
                 <div className="step-num">{s.num}</div>
                 {i < steps.length - 1 && <div className="step-line" />}
                 <div className="step-body">
@@ -172,9 +206,9 @@ export default function LandingPage({ onGetStarted }: Props) {
       {/* ── Bottom CTA ── */}
       <section className="landing-bottom-cta">
         <div className="landing-section-inner">
-          <h2>Ready to relive your chats?</h2>
-          <p>No sign-up. No install. Just upload and view.</p>
-          <button className="landing-cta" onClick={onGetStarted}>
+          <h2 data-aos="fade-up">Ready to relive your chats?</h2>
+          <p data-aos="fade-up" data-aos-delay="80">No sign-up. No install. Just upload and view.</p>
+          <button className="landing-cta" onClick={onGetStarted} data-aos="fade-up" data-aos-delay="160">
             Open a Chat
             <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
               <path d="M8 5v14l11-7z"/>
