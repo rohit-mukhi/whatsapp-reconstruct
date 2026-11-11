@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import LandingPage from './components/LandingPage';
 import SetupScreen from './components/SetupScreen';
 import ChatScreen from './components/ChatScreen';
 import { parseChat } from './utils/parseChat';
 import type { ParsedChat } from './types';
 import './App.css';
 
-type AppState = 'setup' | 'loading' | 'chat';
+type AppState = 'landing' | 'setup' | 'loading' | 'chat';
 
 export default function App() {
-  const [appState, setAppState] = useState<AppState>('setup');
+  const [appState, setAppState] = useState<AppState>('landing');
   const [chat, setChat] = useState<ParsedChat | null>(null);
   const [userName, setUserName] = useState('');
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
@@ -16,8 +17,6 @@ export default function App() {
 
   const handleStart = (chatFile: File, name: string, media: File[]) => {
     setAppState('loading');
-
-    // Double rAF ensures the loading screen is fully painted before we block the thread
     requestAnimationFrame(() => {
       requestAnimationFrame(async () => {
         const raw = await chatFile.text();
@@ -53,5 +52,9 @@ export default function App() {
     );
   }
 
-  return <SetupScreen onStart={handleStart} />;
+  if (appState === 'setup') {
+    return <SetupScreen onStart={handleStart} onBack={() => setAppState('landing')} />;
+  }
+
+  return <LandingPage onGetStarted={() => setAppState('setup')} />;
 }
